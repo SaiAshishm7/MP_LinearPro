@@ -1,67 +1,76 @@
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import TemplateView
+from django.db import OperationalError
 from .models import OptimizationParameters, OptimizationResult
 from .forms import OptimizationForm
 import json
-from django.views.generic import TemplateView
 
 class OptimizationView(TemplateView):
     template_name = 'index.html'
     
     def get(self, request):
-        # Get or create default parameters
-        params, created = OptimizationParameters.objects.get_or_create(id=1)
-        form = OptimizationForm(instance=params)
-        
-        # Get the latest result if it exists
-        latest_result = OptimizationResult.objects.filter(parameters=params).last()
-        
-        # Generate sensitivity data for chart
-        sensitivity_data = []
-        if latest_result:
-            for b in range(int(params.budget * 0.5), int(params.budget * 1.5), int(params.budget * 0.1)):
-                result = self.solve_with_budget(params, b)
-                sensitivity_data.append({
-                    'budget': b,
-                    'production': result['production']
-                })
-        
-        context = {
-            'form': form,
-            'result': latest_result,
-            'sensitivity_data': json.dumps(sensitivity_data),
-        }
-        
-        return render(request, 'workforce/optimize.html', context)
+        try:
+            # Get or create default parameters
+            params, created = OptimizationParameters.objects.get_or_create(id=1)
+            form = OptimizationForm(instance=params)
+            
+            # Get the latest result if it exists
+            latest_result = OptimizationResult.objects.filter(parameters=params).last()
+            
+            # Generate sensitivity data for chart
+            sensitivity_data = []
+            if latest_result:
+                for b in range(int(params.budget * 0.5), int(params.budget * 1.5), int(params.budget * 0.1)):
+                    result = self.solve_with_budget(params, b)
+                    sensitivity_data.append({
+                        'budget': b,
+                        'production': result['production']
+                    })
+            
+            context = {
+                'form': form,
+                'result': latest_result,
+                'sensitivity_data': json.dumps(sensitivity_data),
+            }
+            
+            return render(request, 'workforce/optimize.html', context)
+        except OperationalError:
+            # Database is not ready yet, just render the template
+            return render(request, self.template_name)
     
     def post(self, request):
-        # Get or create default parameters
-        params, created = OptimizationParameters.objects.get_or_create(id=1)
-        
-        # Update parameters with form data
-        form = OptimizationForm(request.POST, instance=params)
-        if form.is_valid():
-            params = form.save()
+        try:
+            # Get or create default parameters
+            params, created = OptimizationParameters.objects.get_or_create(id=1)
             
-            # Solve the optimization problem
-            solution = self.solve_workforce_optimization(params)
+            # Update parameters with form data
+            form = OptimizationForm(request.POST, instance=params)
+            if form.is_valid():
+                params = form.save()
+                
+                # Solve the optimization problem
+                solution = self.solve_workforce_optimization(params)
+                
+                # Create a new result object
+                OptimizationResult.objects.create(
+                    parameters=params,
+                    skilled_workers=solution['skilled_workers'],
+                    semi_skilled_workers=solution['semi_skilled_workers'],
+                    total_production=solution['total_production'],
+                    budget_used=solution['budget_used'],
+                )
+                
+                return redirect('optimize')
             
-            # Create a new result object
-            OptimizationResult.objects.create(
-                parameters=params,
-                skilled_workers=solution['skilled_workers'],
-                semi_skilled_workers=solution['semi_skilled_workers'],
-                total_production=solution['total_production'],
-                budget_used=solution['budget_used'],
-            )
+            context = {
+                'form': form,
+            }
             
-            return redirect('optimize')
-        
-        context = {
-            'form': form,
-        }
-        
-        return render(request, 'workforce/optimize.html', context)
+            return render(request, 'workforce/optimize.html', context)
+        except OperationalError:
+            # Database is not ready yet, just render the template
+            return render(request, self.template_name)
     
     def solve_workforce_optimization(self, params):
         """

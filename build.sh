@@ -18,6 +18,10 @@ mkdir -p workforce/static/assets
 echo "Copying build files to Django static directory..."
 cp -r dist/* workforce/static/
 
+echo "Running database migrations..."
+python manage.py makemigrations
+python manage.py migrate
+
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
