@@ -1,9 +1,21 @@
 #!/bin/bash
-# Install dependencies
+
+# Exit on error
+set -e
+
+echo "Installing dependencies..."
 npm install
 
-# Build the frontend
+echo "Building frontend..."
 npm run build
 
-# Copy the build files to the Django static directory
-cp -r dist/* workforce/static/ 
+echo "Creating static directory if it doesn't exist..."
+mkdir -p workforce/static/assets
+
+echo "Copying build files to Django static directory..."
+cp -r dist/* workforce/static/
+
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
+
+echo "Build completed successfully!" 
