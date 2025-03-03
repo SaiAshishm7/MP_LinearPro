@@ -11,7 +11,7 @@ const Footer = ({ className }: { className?: string }) => {
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="flex space-x-6 mb-4 md:mb-0">
             <a 
-              href="https://github.com/SaiAshishm7/MP_LinearPro" 
+              href="https://github.com/SaiAshishm7/MathSolveX" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors text-sm flex items-center gap-1"
