@@ -1,32 +1,29 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowRight, Menu, X } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import MathSolveXLogo from './MathSolveXLogo';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  const handleScroll = () => {
-    setScrolled(window.scrollY > 10);
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location]);
-
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'About', path: '/about' },
   ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 10;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav
@@ -37,8 +34,8 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-sm">MS</span>
+          <div className="rounded-lg flex items-center justify-center">
+            <MathSolveXLogo className="w-10 h-10" />
           </div>
           <span className="font-display font-medium text-xl">MathSolveX</span>
         </Link>
@@ -81,35 +78,33 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Navigation */}
-      <div
-        className={cn(
-          "fixed inset-0 z-40 bg-white dark:bg-gray-900 transform transition-transform duration-300 ease-in-out pt-20",
-          isOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
-        <div className="flex flex-col items-center space-y-6 p-8">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={cn(
-                "font-medium text-lg transition-colors",
-                location.pathname === item.path
-                  ? "text-primary"
-                  : "text-foreground/80 hover:text-foreground"
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
-          <Button asChild className="mt-4 w-full">
-            <Link to="/dashboard" className="flex items-center justify-center space-x-2">
-              <span>Get Started</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-background border-b border-border">
+          <div className="px-6 py-4 space-y-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={cn(
+                  "block font-medium text-sm transition-colors",
+                  location.pathname === item.path
+                    ? "text-primary"
+                    : "text-foreground/80 hover:text-foreground"
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
+            <Button asChild className="w-full">
+              <Link to="/dashboard" className="flex items-center justify-center space-x-2">
+                <span>Get Started</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };
