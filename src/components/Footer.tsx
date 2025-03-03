@@ -13,12 +13,15 @@ const Footer = ({ className }: { className?: string }) => {
             &copy; {currentYear} Sai Ashish, Lokesh and DR.Sudarshan Babu. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <Link to="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-              Privacy Policy
-            </Link>
-            <Link to="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-              Terms of Service
-            </Link>
+            <a 
+              href="https://github.com/SaiAshishm7/MP_LinearPro" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors text-sm flex items-center gap-1"
+            >
+              <Github className="w-4 h-4" />
+              GitHub
+            </a>
           </div>
         </div>
       </div>
