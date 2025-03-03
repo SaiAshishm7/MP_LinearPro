@@ -16,13 +16,13 @@ echo "Creating static directory if it doesn't exist..."
 mkdir -p workforce/static/assets
 
 echo "Copying build files to Django static directory..."
-cp -r dist/* workforce/static/
+cp -r dist/* workforce/static/assets/
 
 echo "Running database migrations..."
-python manage.py makemigrations
+python manage.py makemigrations workforce
 python manage.py migrate
 
 echo "Collecting static files..."
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput --clear
 
 echo "Build completed successfully!" 
