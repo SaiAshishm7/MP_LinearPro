@@ -1,11 +1,13 @@
-
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import OptimizationParameters, OptimizationResult
 from .forms import OptimizationForm
 import json
+from django.views.generic import TemplateView
 
-class OptimizationView(View):
+class OptimizationView(TemplateView):
+    template_name = 'index.html'
+    
     def get(self, request):
         # Get or create default parameters
         params, created = OptimizationParameters.objects.get_or_create(id=1)
