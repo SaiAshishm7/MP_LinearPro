@@ -3,7 +3,10 @@
 # Exit on error
 set -e
 
-echo "Installing dependencies..."
+echo "Installing Python dependencies..."
+pip install -r requirements.txt
+
+echo "Installing Node dependencies..."
 npm install
 
 echo "Building frontend..."
