@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'vendor': ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query'],
           'ui': ['@radix-ui/react-dialog', '@radix-ui/react-popover', 'class-variance-authority'],
           'charts': ['recharts'],
         },
