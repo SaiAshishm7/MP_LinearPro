@@ -4,7 +4,12 @@
 set -e
 
 echo "Installing Python dependencies..."
+python -m pip install --upgrade pip
 pip install -r requirements.txt
+
+echo "Running database migrations..."
+python manage.py makemigrations workforce
+python manage.py migrate
 
 echo "Installing Node dependencies..."
 npm install
@@ -17,10 +22,6 @@ mkdir -p workforce/static/assets
 
 echo "Copying build files to Django static directory..."
 cp -r dist/* workforce/static/assets/
-
-echo "Running database migrations..."
-python manage.py makemigrations workforce
-python manage.py migrate
 
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear
