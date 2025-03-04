@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query', 'next-themes', 'sonner'],
-          'ui': ['@radix-ui/react-dialog', '@radix-ui/react-popover', 'class-variance-authority'],
+          'ui': ['@radix-ui/react-dialog', '@radix-ui/react-popover', '@radix-ui/react-tooltip', 'class-variance-authority'],
           'charts': ['recharts'],
         },
       },
